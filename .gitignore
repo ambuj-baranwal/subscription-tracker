@@ -1,0 +1,153 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+core
+report.*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# Build outputs
+dist/
+build/
+out/
+lib/
+.esbuild/
+.cache/
+.parcel-cache/
+.tmp/
+temp/
+tmp/
+
+# Frameworks
+# Next.js / Gatsby / Remix / Nuxt / SvelteKit / Storybook
+.next/
+public/build/
+.nuxt/
+.svelte-kit/
+storybook-static/
+
+# Tooling caches
+.eslintcache
+.stylelintcache
+.prettier-cache
+*.tsbuildinfo
+
+# Tests and e2e
+coverage/
+.nyc_output/
+.vscode-test/
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+playwright-report/
+test-results/
+
+# Package managers
+# NPM
+.npm
+# Yarn (v1/v2)
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.yarnrc.yml
+.yarn-integrity
+.pnp.*
+# PNPM
+.pnpm-debug.log*
+.pnpm-store/
+
+# Environment files (keep examples)
+.env*
+!.env.example
+!.env.*.example
+
+# IDE/editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.c9/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS files
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# React Native / mobile (if applicable)
+android/.gradle/
+android/.idea/
+android/.cxx/
+android/app/build/
+android/build/
+android/local.properties
+ios/Pods/
+ios/build/
+ios/DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcworkspace
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+.expo/
+.expo-shared/
+*.keystore
+*.jks
+
+# Monorepo / builders
+.turbo/
+.serverless/
+.netlify/
+.vercel/
+.firebase/
+.aws-sam/
+
+# Misc
+*.tgz
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+.#*
+.nfs*
