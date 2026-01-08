@@ -40,26 +40,39 @@ const createSubscription = async (req, res) => {
       renewalDate,
     } = req.body;
     const userId = req.user.id;
-    const dt = new Date();
+    const start = new Date(startDate);
+    let renewal = renewalDate ? new Date(renewalDate) : null;
+
     // console.log(`Current DateTime : ${dt.toLocaleString("en-IN")} `)
-    if (!renewalDate || !frequency) {
-      dt.setMinutes(dt.getMinutes() + frequency);
-      renewalDate = dt;
+    if (!renewal) {
+      const frequencyMap = {
+        daily: 1,
+        weekly: 7,
+        monthly: 30,
+        quarterly: 90,
+        halfYearly: 182,
+        yearly: 365,
+      };
+
+      // Calculate renewal date properly
+      const daysToAdd = frequencyMap[frequency] || 30;
+      renewal = new Date(start);
+      renewal.setDate(renewal.getDate() + daysToAdd);
     }
     // console.log(`Renewal Date : ${renewalDate.toLocaleString("en-IN")}`)
     const subscription = await Subscription.create({
       data: {
         userId: userId,
         name: name,
-        price: price,
+        price: Number(price),
         currency: currency,
         frequency: frequency,
         category: category,
         paymentMethod: paymentMethod,
         status: status,
-        startDate: startDate,
-        renewalDate: renewalDate,
-        reminders: {},
+        startDate: start,
+        renewalDate: renewal,
+        // reminders: {},
       },
     });
 
@@ -70,7 +83,7 @@ const createSubscription = async (req, res) => {
       );
   } catch (error) {
     console.log("Failed to create Subscription", error);
-    return res.status(404).json({
+    return res.status(500).json({
       message: "Failed to create subscription",
       error: error.message,
     });
