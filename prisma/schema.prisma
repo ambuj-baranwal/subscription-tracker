@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String         @id @default(uuid(4))
+  // clerkId       String         @unique
+  username      String         @unique
+  avatar        String?
+  email         String         @unique
+  password      String?
+  fullName      String
+  accessToken   String?
+  refreshToken  String?
+  lastLogin     DateTime?      @default(now())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[]
+  conversations Conversation[]
+  Reminder      Reminder[]
+}
+
+model Subscription {
+  id            String     @id @default(uuid(4))
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  price         Int
+  currency      currency   @default(INR)
+  frequency     frequency? @default(monthly)
+  category      category
+  paymentMethod String
+  status        status     @default(active)
+  startDate     DateTime
+  renewalDate   DateTime?
+  // billingCycle   String           @default("monthly")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  reminders     Reminder[]
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  title     String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  messages  Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  role           role
+  content        String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  conversationId String
+  Conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  @@map("messages")
+}
+
+model Reminder {
+  id             String       @id @default(uuid(4))
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  type           String // (e.g., '1_month_before', '10_days_before', '1_hour_before', 'renewal')
+  payload        Json // -- { to, subject, text, html, ... }
+  timezone       String       @default("UTC") // IANA tz (e.g. 'Asia/Kolkata')
+  scheduleType   String // 'one_time' | 'daily' | 'weekly' | 'monthly' | 'cron'
+  cronExpression String? //  optional: cron expression for 'cron'
+  sendAt         DateTime? //  next scheduled send (UTC)
+  enabled        Boolean      @default(true)
+  attempts       Int          @default(0)
+  maxAttempts    Int          @default(3)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([sendAt], name: "idx_reminders_send_at")
+}
+
+enum status {
+  active
+  cancelled
+  expired
+}
+
+enum paymentStatus {
+  paid
+  unpaid
+  failed
+}
+
+enum currency {
+  INR
+  USD
+  EUR
+  JPY
+}
+
+enum frequency {
+  daily
+  weekly
+  monthly
+  quarterly
+  halfYearly
+  yearly
+}
+
+enum category {
+  sports
+  news
+  entertainment
+  lifestyle
+  technology
+  finance
+  politics
+  other
+}
+
+enum reminderStatus {
+  pending
+  failed
+  success
+}
+
+enum role {
+  system
+  user
+  assistant
+  tool
+}
