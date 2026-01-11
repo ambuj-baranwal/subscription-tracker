@@ -117,47 +117,29 @@ const getSubscriptionById = async (req, res) => {
 
 const updateSubscription = async (req, res) => {
   try {
-    let {
-      name,
-      price,
-      currency,
-      frequency,
-      category,
-      paymentMethod,
-      status,
-      startDate,
-      renewalDate,
-    } = req.body;
     const Id = req.user.id;
     const { id: subscriptionId } = req.params;
-    if (!renewalDate && frequency) {
-      renewalDate = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
-    }
+
+    const updateData = req.body;
     const updatedSubscription = await Subscription.update({
       where: { id: subscriptionId, userId: Id },
-      data: {
-        name: name,
-        price: price,
-        currency: currency,
-        category: category,
-        paymentMethod: paymentMethod,
-        status: status,
-        startDate: startDate,
-        renewalDate: renewalDate,
-      },
+      data: updateData,
     });
     return res
-      .status(201)
+      .status(200)
       .json(
         new ApiResponse(
-          201,
+          200,
           updatedSubscription,
           "Subscription updated successfully"
         )
       );
   } catch (error) {
     console.log("Failed to update Subscriptions", error);
-    return res.status(404).json({
+    if (error.code === "P2025") {
+      return res.status(404).json({ message: "Subscription not found" });
+    }
+    return res.status(500).json({
       message: "Failed to update subscriptions",
       error: error.message,
     });

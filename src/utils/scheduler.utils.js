@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { Reminder, User } from "../config/prisma.js"; // Import models
+import { Reminder, User } from "../config/prisma.js";
 import { sendEmail } from "./sendEmail.utils.js";
 import { calculateSendDate } from "./dateHandler.utils.js";
 
