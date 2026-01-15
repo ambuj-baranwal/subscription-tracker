@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -74,10 +74,11 @@ model Reminder {
   type           String // (e.g., '1_month_before', '10_days_before', '1_hour_before', 'renewal')
   payload        Json // -- { to, subject, text, html, ... }
   timezone       String       @default("UTC") // IANA tz (e.g. 'Asia/Kolkata')
-  scheduleType   String // 'one_time' | 'daily' | 'weekly' | 'monthly' | 'cron'
-  cronExpression String? //  optional: cron expression for 'cron'
+  // scheduleType   String // 'one_time' | 'daily' | 'weekly' | 'monthly' | 'cron'
+  // cronExpression String? //  optional: cron expression for 'cron'
   sendAt         DateTime? //  next scheduled send (UTC)
   enabled        Boolean      @default(true)
+  daysBefore     Int          @default(1)
   attempts       Int          @default(0)
   maxAttempts    Int          @default(3)
   createdAt      DateTime     @default(now())

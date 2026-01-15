@@ -1,7 +1,10 @@
 import cron from "node-cron";
-import { Reminder, User } from "../config/prisma.js";
+import { prisma, Reminder, Subscription } from "../config/prisma.js";
 import { sendEmail } from "./sendEmail.utils.js";
-import { calculateSendDate } from "./dateHandler.utils.js";
+import {
+  calculateNextPaymentDate,
+  calculateNextReminderTime,
+} from "./dateHandler.utils.js";
 
 const initScheduler = () => {
   cron.schedule("* * * * *", async () => {
@@ -12,14 +15,42 @@ const initScheduler = () => {
         where: {
           sendAt: { lte: now },
           enabled: true,
+          subscription: { status: "active" },
         },
-        include: { user: true },
+        include: { user: true, subscription: true },
       });
 
       for (const reminder of dueReminders) {
         try {
           await sendEmail(reminder.user.email);
-          console.log(`Reminder sent for ${reminder.id}`);
+          console.log(`Reminder Email sent for ${reminder.id}`);
+
+          // recheck & update
+          const currentRenewal = new Date(reminder.subscription.renewalDate);
+          const currentReminderDate = new Date(reminder.sendAt)
+
+            const gapDuration = currentRenewal.getTime() - currentReminderDate.getTime();
+
+          const subscription = await Subscription.findUnique({
+            where: { id: reminder.subscriptionId },
+          });
+
+          const nextRenewal = calculateNextPaymentDate(
+            subscription.frequency,
+            subscription.renewalDate
+          );
+          const nextReminder = calculateNextReminderTime(nextRenewal, 1);
+
+          await prisma.$transaction([
+            Subscription.update({
+              where: { id: subscription.id },
+              data: { renewalDate: nextRenewal },
+            }),
+            Reminder.update({
+              where: { id: reminder.id },
+              data: { sendAt: nextReminder, attempts: 0 },
+            }),
+          ]);
 
           if (reminder.scheduleType === "once") {
             await Reminder.update({
@@ -27,7 +58,7 @@ const initScheduler = () => {
               data: { enabled: false },
             });
           } else {
-            const nextDate = calculateSendDate(reminder.scheduleType);
+            const nextDate = calculateNextPaymentDate(reminder.scheduleType);
             await Reminder.update({
               where: { id: reminder.id },
               data: { sendAt: nextDate },
@@ -39,6 +70,16 @@ const initScheduler = () => {
       }
     } catch (error) {
       console.error("Scheduler Error:", error);
+      const newAttempts = reminder.attempts + 1;
+      const shouldDisable = newAttempts >= reminder.maxAttempts;
+
+      await Reminder.update({
+        where: { id: reminder.id },
+        data: {
+          attempts: newAttempts,
+          enabled: !shouldDisable,
+        },
+      });
     }
   });
 

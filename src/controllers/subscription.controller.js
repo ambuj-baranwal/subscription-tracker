@@ -1,5 +1,6 @@
 import { Subscription } from "../config/prisma.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import {calculateNextPaymentDate} from "../utils/dateHandler.utils.js";
 
 const getSubscriptions = async (req, res) => {
   try {
@@ -41,24 +42,11 @@ const createSubscription = async (req, res) => {
     } = req.body;
     const userId = req.user.id;
     const start = new Date(startDate);
-    let renewal = renewalDate ? new Date(renewalDate) : null;
+    let renewal = renewalDate ? new Date(renewalDate) : calculateNextPaymentDate(frequency, startDate);
 
+    const reminderDate = new Date(renewal);
+    reminderDate.setDate(reminderDate.getDate() - 1);
     // console.log(`Current DateTime : ${dt.toLocaleString("en-IN")} `)
-    if (!renewal) {
-      const frequencyMap = {
-        daily: 1,
-        weekly: 7,
-        monthly: 30,
-        quarterly: 90,
-        halfYearly: 182,
-        yearly: 365,
-      };
-
-      // Calculate renewal date properly
-      const daysToAdd = frequencyMap[frequency] || 30;
-      renewal = new Date(start);
-      renewal.setDate(renewal.getDate() + daysToAdd);
-    }
     // console.log(`Renewal Date : ${renewalDate.toLocaleString("en-IN")}`)
     const subscription = await Subscription.create({
       data: {
@@ -72,7 +60,16 @@ const createSubscription = async (req, res) => {
         status: status,
         startDate: start,
         renewalDate: renewal,
-        // reminders: {},
+        reminders: {
+            create: {
+                userId: userId,
+                type: 'email',
+                scheduleType: frequency,
+                sendAt: reminderDate,
+                // status: 'pending',
+                payload: {}
+            }
+        },
       },
     });
 

@@ -1,7 +1,7 @@
 import { Reminder } from "../config/prisma.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { cancelEmail, sendEmail } from "../utils/sendEmail.utils.js";
-import { calculateSendDate } from "../utils/dateHandler.utils.js";
+import {calculateNextPaymentDate} from "../utils/dateHandler.utils.js";
 
 const getAllReminders = async (req, res) => {
   try {
@@ -44,7 +44,7 @@ const createReminder = async (req, res) => {
 
     // const dt = new Date();
     // dt.setMinutes(dt.getMinutes() + 1);
-    sendAt = calculateSendDate(scheduleType);
+    sendAt = calculateNextPaymentDate(scheduleType);
 
     const reminder = await Reminder.create({
       data: {
@@ -141,7 +141,7 @@ const updateReminder = async (req, res) => {
     } = req.body;
     const { id: reminderId } = req.params;
 
-    sendAt = calculateSendDate(scheduleType);
+    sendAt = calculateNextPaymentDate(scheduleType);
     const updatedReminder = await Reminder.update({
       where: { id: reminderId, userId: userId },
       data: {
