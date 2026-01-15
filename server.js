@@ -7,6 +7,7 @@ import initCronJobs from "./src/utils/scheduler.utils.js";
 
 import authRouter from "./src/routes/auth.routes.js";
 import userRouter from "./src/routes/user.routes.js";
+import dashboardRouter from "./src/routes/dashboard.routes.js";
 import subscriptionRouter from "./src/routes/subscription.routes.js";
 import reminderRouter from "./src/routes/reminder.routes.js";
 import { errorMiddleware } from "./src/middlewares/error.middleware.js";
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/subscriptions", subscriptionRouter);
 app.use("/api/v1/:subscriptionId/reminders", reminderRouter);
 //add extra for direct access to reminders

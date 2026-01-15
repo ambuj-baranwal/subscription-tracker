@@ -2,8 +2,8 @@ import cron from "node-cron";
 import { prisma, Reminder, Subscription } from "../config/prisma.js";
 import { sendEmail } from "./sendEmail.utils.js";
 import {
-  calculateNextPaymentDate,
-  calculateNextReminderTime,
+    calculateNextCycleDate,
+    calculateNextReminderTime,
 } from "./dateHandler.utils.js";
 
 const initScheduler = () => {
@@ -35,7 +35,7 @@ const initScheduler = () => {
             where: { id: reminder.subscriptionId },
           });
 
-          const nextRenewal = calculateNextPaymentDate(
+          const nextRenewal = calculateNextCycleDate(
             subscription.frequency,
             subscription.renewalDate
           );
@@ -58,7 +58,7 @@ const initScheduler = () => {
               data: { enabled: false },
             });
           } else {
-            const nextDate = calculateNextPaymentDate(reminder.scheduleType);
+            const nextDate = calculateNextCycleDate(reminder.scheduleType);
             await Reminder.update({
               where: { id: reminder.id },
               data: { sendAt: nextDate },
