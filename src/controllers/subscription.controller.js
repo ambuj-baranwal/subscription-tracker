@@ -1,6 +1,6 @@
 import { Subscription } from "../config/prisma.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import {calculateNextPaymentDate} from "../utils/dateHandler.utils.js";
+import { calculateNextCycleDate} from "../utils/dateHandler.utils.js";
 
 const getSubscriptions = async (req, res) => {
   try {
@@ -42,7 +42,7 @@ const createSubscription = async (req, res) => {
     } = req.body;
     const userId = req.user.id;
     const start = new Date(startDate);
-    let renewal = renewalDate ? new Date(renewalDate) : calculateNextPaymentDate(frequency, startDate);
+    let renewal = renewalDate ? new Date(renewalDate) : calculateNextCycleDate(frequency, startDate);
 
     const reminderDate = new Date(renewal);
     reminderDate.setDate(reminderDate.getDate() - 1);
