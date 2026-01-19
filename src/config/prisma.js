@@ -7,6 +7,7 @@ const Subscription = prisma.subscription
 const Reminder = prisma.reminder
 const Conversation = prisma.conversation
 const Message = prisma.message
+const WebPushSubscription = prisma.webPushSubscription
 
 export {
     prisma,
@@ -15,6 +16,7 @@ export {
     Reminder,
     Conversation,
     Message,
+    WebPushSubscription,
 }
 
 // export default prisma;

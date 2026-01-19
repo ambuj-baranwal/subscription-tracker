@@ -64,7 +64,7 @@ const createSubscription = async (req, res) => {
             create: {
                 userId: userId,
                 type: 'email',
-                scheduleType: frequency,
+                // scheduleType: frequency,
                 sendAt: reminderDate,
                 // status: 'pending',
                 payload: {}

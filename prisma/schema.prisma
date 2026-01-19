@@ -8,21 +8,22 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid(4))
+  id                  String                @id @default(uuid(4))
   // clerkId       String         @unique
-  username      String         @unique
-  avatar        String?
-  email         String         @unique
-  password      String?
-  fullName      String
-  accessToken   String?
-  refreshToken  String?
-  lastLogin     DateTime?      @default(now())
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  subscriptions Subscription[]
-  conversations Conversation[]
-  Reminder      Reminder[]
+  username            String                @unique
+  avatar              String?
+  email               String                @unique
+  password            String?
+  fullName            String
+  accessToken         String?
+  refreshToken        String?
+  lastLogin           DateTime?             @default(now())
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  subscriptions       Subscription[]
+  conversations       Conversation[]
+  Reminder            Reminder[]
+  WebPushSubscription WebPushSubscription[]
 }
 
 model Subscription {
@@ -71,7 +72,7 @@ model Reminder {
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   subscriptionId String
   subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  type           String // (e.g., '1_month_before', '10_days_before', '1_hour_before', 'renewal')
+  type           String       @default("email") // (e.g., '1_month_before', '10_days_before', '1_hour_before', 'renewal')
   payload        Json // -- { to, subject, text, html, ... }
   timezone       String       @default("UTC") // IANA tz (e.g. 'Asia/Kolkata')
   // scheduleType   String // 'one_time' | 'daily' | 'weekly' | 'monthly' | 'cron'
@@ -85,6 +86,16 @@ model Reminder {
   updatedAt      DateTime     @updatedAt
 
   @@index([sendAt], name: "idx_reminders_send_at")
+}
+
+model WebPushSubscription {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique // The browser's unique URL
+  p256dh    String // Encryption key
+  auth      String // Auth key
+  createdAt DateTime @default(now())
 }
 
 enum status {

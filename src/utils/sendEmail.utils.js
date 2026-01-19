@@ -2,13 +2,14 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const sendEmail = async (emailId, scheduleISODateTime = null) => {
+const sendEmail = async (emailId, message = '', scheduleISODateTime = null) => {
   try {
     const emailConfig = {
       from: "Subscription Tracker <onboarding@resend.dev>",
       to: emailId,
       subject: "Reminder from Subscription Tracker",
-      html: `<h1>Your subscription is renewing soon!</h1>`,
+      html: `<h1>Your subscription is renewing soon!</h1>
+                    <p>${message}</p>`,
     };
 
     if (scheduleISODateTime) {
