@@ -137,3 +137,6 @@ dist
 
 # SvelteKit build / generate output
 .svelte-kit
+prisma/migrations/20260121050825_04reminderschema/migration.sql
+prisma/migrations/20260120144250_init/migration.sql
+prisma/migrations/20260121045500_04reminderschema/migration.sql

@@ -1,4 +1,11 @@
-import { addDays, addWeeks, addMonths, addYears, subDays, isValid } from 'date-fns';
+import {
+  addDays,
+  addWeeks,
+  addMonths,
+  addYears,
+  subDays,
+  isValid,
+} from "date-fns";
 // import { formatInTimeZone, zonedTimeToUtc } from "date-fns-tz";
 import { ApiError } from "./ApiError.js";
 
@@ -9,20 +16,30 @@ import { ApiError } from "./ApiError.js";
  * @returns {Date} - Next renewal date in UTC format
  */
 const calculateNextCycleDate = (frequency, baseDate = new Date()) => {
-    const date = new Date(baseDate);
-    if (!isValid(date)) { throw new ApiError("Invalid base date provided."); }
+  const date = new Date(baseDate);
+  if (!isValid(date)) {
+    throw new ApiError("Invalid base date provided.");
+  }
 
-    switch (frequency) {
-        case "once": return date;
-        case "daily": return addDays(date, 1);
-        case "weekly": return addWeeks(date, 1);
-        case "monthly": return addMonths(date, 1);
-        case "quarterly": return addMonths(date, 3);
-        case "halfYearly": return addMonths(date, 6);
-        case "yearly": return addYears(date, 1);
-        default: throw new ApiError(400, `Invalid frequency type: ${frequency}`);
-    }
-}
+  switch (frequency) {
+    case "once":
+      return date;
+    case "daily":
+      return addDays(date, 1);
+    case "weekly":
+      return addWeeks(date, 1);
+    case "monthly":
+      return addMonths(date, 1);
+    case "quarterly":
+      return addMonths(date, 3);
+    case "halfYearly":
+      return addMonths(date, 6);
+    case "yearly":
+      return addYears(date, 1);
+    default:
+      throw new ApiError(400, `Invalid frequency type: ${frequency}`);
+  }
+};
 
 /**
  *
@@ -31,11 +48,13 @@ const calculateNextCycleDate = (frequency, baseDate = new Date()) => {
  * @returns {Date}
  */
 const calculateNextReminderTime = (renewalDate, daysBefore) => {
-    const date = new Date(renewalDate);
-    if (!isValid(date)) {throw new ApiError(400, `Invalid reminder date: ${date}`);}
-    // subtract days
-    return subDays(date, daysBefore);
-}
+  const date = new Date(renewalDate);
+  if (!isValid(date)) {
+    throw new ApiError(400, `Invalid reminder date: ${date}`);
+  }
+  // subtract days
+  return subDays(date, daysBefore);
+};
 
 /*
 
@@ -63,7 +82,4 @@ const formatDateForLocale = (date, timezone = 'UTC', formatStr = 'PPpp') => {
 
 */
 
-export {
-  calculateNextCycleDate,
-  calculateNextReminderTime,
-};
+export { calculateNextCycleDate, calculateNextReminderTime };

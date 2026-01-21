@@ -5,15 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a81205bb-1e52-493c-8a57-dae36343a9a1" name="Changes" comment=".">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prisma/dev.db" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/dev.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config/prisma.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/prisma.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/auth.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/auth.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/reminder.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/reminder.controller.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controllers/subscription.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/subscription.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/user.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/user.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middlewares/error.middleware.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/middlewares/error.middleware.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/notification.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/notification.routes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/reminder.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/reminder.routes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/subscription.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/subscription.routes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/user.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/user.routes.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/services/sender.service.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/sender.service.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/auth.utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/auth.utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/dateHandler.utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/dateHandler.utils.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/scheduler.utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/scheduler.utils.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/sendEmail.utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/sendEmail.utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/validations/auth.validation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/validations/auth.validation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/validations/reminder.validation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/validations/reminder.validation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/validations/subscription.validation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/validations/subscription.validation.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +37,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="HTTP Public Environment File" />
         <option value="JavaScript File" />
       </list>
     </option>
@@ -30,6 +45,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HttpClientOnboardingState"><![CDATA[{
+  "isOnboardingCommentShown": true
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -46,6 +64,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "HTTP Request.generated-requests | #2.executor": "Run",
+    "HTTP Request.generated-requests | #3.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -70,6 +90,34 @@
       <recent name="C:\Users\ambuj\Project\refactor1\src\controllers" />
     </key>
   </component>
+  <component name="RunDashboard">
+    <option name="configurationStatuses">
+      <map>
+        <entry key="HttpClient.HttpRequestRunConfigurationType">
+          <value>
+            <map>
+              <entry key="generated-requests | #2" value="STOPPED" />
+              <entry key="generated-requests | #3" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="RunManager" selected="HTTP Request.generated-requests | #2">
+    <configuration name="generated-requests | #2" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http" executionIdentifier="#2" index="2" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="generated-requests | #3" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/generated-requests.http" executionIdentifier="#3" index="3" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP Request.generated-requests | #2" />
+        <item itemvalue="HTTP Request.generated-requests | #3" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -86,7 +134,7 @@
       <updated>1768202175430</updated>
       <workItem from="1768202178866" duration="10335000" />
       <workItem from="1768268180438" duration="25621000" />
-      <workItem from="1768467061590" duration="24173000" />
+      <workItem from="1768467061590" duration="63725000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <option name="closed" value="true" />
@@ -102,6 +150,17 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="." />
     <option name="LAST_COMMIT_MESSAGE" value="." />
@@ -111,20 +170,38 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/utils/dateHandler.utils.js</url>
-          <line>10</line>
+          <line>17</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/services/sender.service.js</url>
-          <line>34</line>
+          <line>65</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/utils/scheduler.utils.js</url>
-          <line>68</line>
+          <line>75</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/utils/sendEmail.utils.js</url>
+          <line>21</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/utils/sendEmail.utils.js</url>
+          <line>10</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/controllers/auth.controller.js</url>
+          <line>21</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

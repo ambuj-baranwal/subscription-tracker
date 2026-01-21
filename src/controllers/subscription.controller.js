@@ -93,6 +93,7 @@ const getSubscriptionById = async (req, res) => {
     const { id: subscriptionId } = req.params;
     const subscription = await Subscription.findUnique({
       where: { id: subscriptionId, userId: Id },
+        include: {reminders: true}
     });
 
     if (!subscription) {

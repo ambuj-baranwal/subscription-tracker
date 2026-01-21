@@ -19,7 +19,7 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
                 id: userId
             },
             data: {
-                accessToken: accessToken,
+                // accessToken: accessToken,
                 refreshToken: refreshToken,
             },
         })

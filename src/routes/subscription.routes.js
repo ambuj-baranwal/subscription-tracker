@@ -35,6 +35,5 @@ router.route("/:id/cancel").put(verifyJWT);
 
 router.route("/upcoming-renewals").get(verifyJWT);
 
-router.route("/user/:id").get(verifyJWT);
 
 export default router;
