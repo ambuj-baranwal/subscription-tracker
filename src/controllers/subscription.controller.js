@@ -134,9 +134,6 @@ const updateSubscription = async (req, res) => {
       );
   } catch (error) {
     console.log("Failed to update Subscriptions", error);
-    if (error.code === "P2025") {
-      return res.status(404).json({ message: "Subscription not found" });
-    }
     return res.status(500).json({
       message: "Failed to update subscriptions",
       error: error.message,

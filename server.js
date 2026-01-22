@@ -41,7 +41,6 @@ app.use("/api/v1/:subscriptionId/reminders", reminderRouter);
 app.use("/api/v1/notifications", notificationRouter);
 
 // for reminders
-
 initCronJobs();
 
 // 404

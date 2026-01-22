@@ -74,8 +74,8 @@ const initScheduler = () => {
           });
         }
       }
-    } catch (fatalError) {
-      console.error("Scheduler fatal error:", fatalError);
+    } catch (error) {
+      console.error("Scheduler fatal error:", error);
     } finally {
       isRunning = false;
     }
