@@ -1,5 +1,8 @@
 import { Subscription } from "../config/prisma.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { calculateNextCycleDate } from "../utils/dateHandler.utils.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { addDays } from "date-fns";
 
 const getSubscriptions = async (req, res) => {
   try {
@@ -38,27 +41,17 @@ const createSubscription = async (req, res) => {
       status,
       startDate,
       renewalDate,
+      daysBefore = 1,
     } = req.body;
     const userId = req.user.id;
     const start = new Date(startDate);
-    let renewal = renewalDate ? new Date(renewalDate) : null;
+    let renewal = renewalDate
+      ? new Date(renewalDate)
+      : calculateNextCycleDate(frequency, startDate);
 
+    const reminderDate = new Date(renewal);
+    reminderDate.setDate(reminderDate.getDate() - Number(daysBefore));
     // console.log(`Current DateTime : ${dt.toLocaleString("en-IN")} `)
-    if (!renewal) {
-      const frequencyMap = {
-        daily: 1,
-        weekly: 7,
-        monthly: 30,
-        quarterly: 90,
-        halfYearly: 182,
-        yearly: 365,
-      };
-
-      // Calculate renewal date properly
-      const daysToAdd = frequencyMap[frequency] || 30;
-      renewal = new Date(start);
-      renewal.setDate(renewal.getDate() + daysToAdd);
-    }
     // console.log(`Renewal Date : ${renewalDate.toLocaleString("en-IN")}`)
     const subscription = await Subscription.create({
       data: {
@@ -72,14 +65,22 @@ const createSubscription = async (req, res) => {
         status: status,
         startDate: start,
         renewalDate: renewal,
-        // reminders: {},
+        reminders: {
+          create: {
+            userId: userId,
+            type: "email",
+            daysBefore: Number(daysBefore),
+            sendAt: reminderDate,
+            payload: {},
+          },
+        },
       },
     });
 
     return res
       .status(201)
       .json(
-        new ApiResponse(201, subscription, "Subscription created successfully")
+        new ApiResponse(201, subscription, "Subscription created successfully"),
       );
   } catch (error) {
     console.log("Failed to create Subscription", error);
@@ -96,6 +97,7 @@ const getSubscriptionById = async (req, res) => {
     const { id: subscriptionId } = req.params;
     const subscription = await Subscription.findUnique({
       where: { id: subscriptionId, userId: Id },
+      include: { reminders: true },
     });
 
     if (!subscription) {
@@ -117,47 +119,26 @@ const getSubscriptionById = async (req, res) => {
 
 const updateSubscription = async (req, res) => {
   try {
-    let {
-      name,
-      price,
-      currency,
-      frequency,
-      category,
-      paymentMethod,
-      status,
-      startDate,
-      renewalDate,
-    } = req.body;
     const Id = req.user.id;
     const { id: subscriptionId } = req.params;
-    if (!renewalDate && frequency) {
-      renewalDate = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
-    }
+
+    const updateData = req.body;
     const updatedSubscription = await Subscription.update({
       where: { id: subscriptionId, userId: Id },
-      data: {
-        name: name,
-        price: price,
-        currency: currency,
-        category: category,
-        paymentMethod: paymentMethod,
-        status: status,
-        startDate: startDate,
-        renewalDate: renewalDate,
-      },
+      data: updateData,
     });
     return res
-      .status(201)
+      .status(200)
       .json(
         new ApiResponse(
-          201,
+          200,
           updatedSubscription,
-          "Subscription updated successfully"
-        )
+          "Subscription updated successfully",
+        ),
       );
   } catch (error) {
     console.log("Failed to update Subscriptions", error);
-    return res.status(404).json({
+    return res.status(500).json({
       message: "Failed to update subscriptions",
       error: error.message,
     });

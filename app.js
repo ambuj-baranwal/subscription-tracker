@@ -7,8 +7,12 @@ import initCronJobs from "./src/utils/scheduler.utils.js";
 
 import authRouter from "./src/routes/auth.routes.js";
 import userRouter from "./src/routes/user.routes.js";
+import dashboardRouter from "./src/routes/dashboard.routes.js";
 import subscriptionRouter from "./src/routes/subscription.routes.js";
 import reminderRouter from "./src/routes/reminder.routes.js";
+import notificationRouter from "./src/routes/notification.routes.js";
+import { errorMiddleware } from "./src/middlewares/error.middleware.js";
+import { ApiError } from "./src/utils/ApiError.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,7 +23,7 @@ app.use(
     credentials: true,
   })
 );
-// app.use(express.json());
+app.use(express.json());
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 // app.use(express.static("public"));
@@ -30,24 +34,22 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/users", userRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/subscriptions", subscriptionRouter);
 app.use("/api/v1/:subscriptionId/reminders", reminderRouter);
-//add extra for direct access to reminders
-app.use("/api/v1/reminders", reminderRouter);
-
-// 404
-app.use((req, res) => res.status(404).json({ error: "Not Found" }));
-
-// error handler
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(err.status || 500).json({ error: err.message || "Server error" });
-  // next()
-});
+app.use("/api/v1/notifications", notificationRouter);
 
 // for reminders
 initCronJobs();
+
+// 404
+app.use((req, res, next) => {
+  next(new ApiError(404, `Route Not Found: ${req.originalUrl}`));
+});
+
+// centralized error handler
+app.use(errorMiddleware);
 
 app.listen(port || 3000, () => {
   console.log(

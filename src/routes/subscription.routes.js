@@ -1,35 +1,35 @@
-import { Router } from "express"
+import { Router } from "express";
 import {
-    createSubscription, deleteAllSubscriptions, deleteSubscription,
-    getSubscriptionById,
-    getSubscriptions,
-    updateSubscription
+  createSubscription,
+  deleteAllSubscriptions,
+  deleteSubscription,
+  getSubscriptionById,
+  getSubscriptions,
+  updateSubscription,
 } from "../controllers/subscription.controller.js";
-import {verifyJWT} from "../middlewares/auth.middleware.js";
-import {validate} from "../middlewares/validate.middleware.js";
-import {createSubscriptionSchema} from "../validations/subscription.validation.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import {
+  createSubscriptionSchema,
+  updateSubscriptionSchema,
+} from "../validations/subscription.validation.js";
 
 const router = Router();
+router.use(verifyJWT);
 
-router.route('/delete-all-subscriptions').put(verifyJWT, deleteAllSubscriptions)
+router.route("/delete-all-subscriptions").put(deleteAllSubscriptions);
 
+router
+  .route("/")
+  .get(getSubscriptions)
+  .post(validate(createSubscriptionSchema), createSubscription);
 
-router.route('/')
-    .get(verifyJWT, getSubscriptions)
-    .post(verifyJWT, validate(createSubscriptionSchema), createSubscription)
+router
+  .route("/:id")
+  .get(getSubscriptionById)
+  .put(validate(updateSubscriptionSchema), updateSubscription)
+  .delete(deleteSubscription);
 
-router.route('/:id')
-    .get(verifyJWT, getSubscriptionById)
-    .put(verifyJWT, updateSubscription)
-    .delete(verifyJWT, deleteSubscription)
-
-router.route('/:id/cancel')
-    .put(verifyJWT, )
-
-router.route('/upcoming-renewals')
-    .get(verifyJWT, )
-
-router.route('/user/:id')
-    .get(verifyJWT, )
+// router.route("/:id/cancel").put(verifyJWT);
 
 export default router;

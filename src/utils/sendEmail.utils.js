@@ -1,14 +1,17 @@
 import { Resend } from "resend";
+import { ApiError } from "./ApiError.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const sendEmail = async (emailId, scheduleISODateTime = null) => {
+const sendEmail = async (emailId, message = "", scheduleISODateTime = null) => {
   try {
     const emailConfig = {
       from: "Subscription Tracker <onboarding@resend.dev>",
       to: emailId,
+      // to: process.env.emailId,
       subject: "Reminder from Subscription Tracker",
-      html: `<h1>Your subscription is renewing soon!</h1>`,
+      html: `<h1>Your subscription is renewing soon!</h1>
+                    <p>${message}</p>`,
     };
 
     if (scheduleISODateTime) {
@@ -20,7 +23,8 @@ const sendEmail = async (emailId, scheduleISODateTime = null) => {
     console.log("Email Sent Successfully", response);
     return response;
   } catch (error) {
-    return console.error("Error sending Email", error);
+    throw new ApiError(500, "Error sending email");
+    // return console.error("Error sending Email", error);
   }
 };
 

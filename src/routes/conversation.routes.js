@@ -1,14 +1,15 @@
-import {Router} from "express";
+import { Router } from "express";
 import {
-    addMessageToConversation,
-    createConversation,
-    deleteConversation,
-    deleteMessage,
-    getConversation,
-    getConversationMessages,
-    getConversations,
-    updateConversationTitle,
-    updateMessage,
+  addMessageToConversation,
+  createConversation,
+  deleteConversation,
+  deleteMessage,
+  getConversation,
+  getConversationMessages,
+  getConversations,
+  searchConversation,
+  updateConversationTitle,
+  updateMessage,
 } from "../controllers/conversation.controller.js";
 
 const router = Router();
@@ -32,5 +33,7 @@ router.put("/:conversationId/messages/:messageId", updateMessage);
 
 // Optional route to delete a message
 router.delete("/:conversationId/messages/:messageId", deleteMessage);
+
+router.get("/search", searchConversation);
 
 export default router;

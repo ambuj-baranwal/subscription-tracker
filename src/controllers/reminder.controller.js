@@ -1,170 +1,134 @@
-import { Reminder } from "../config/prisma.js";
+import { Reminder, Subscription } from "../config/prisma.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { cancelEmail, sendEmail } from "../utils/sendEmail.utils.js";
-import { calculateSendDate } from "../utils/dateHandler.utils.js";
+import {
+  calculateNextCycleDate,
+  calculateNextReminderTime,
+} from "../utils/dateHandler.utils.js";
+import { ApiError } from "../utils/ApiError.js";
 
 const getAllReminders = async (req, res) => {
   try {
     const Id = req.user.id; // getting through auth middleware
     const reminders = await Reminder.findMany({
       where: { userId: Id },
-      orderBy: { createdAt: "desc" },
+      include: {
+        subscription: {
+          select: {
+            name: true,
+            renewalDate: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "asc" },
     });
-    if (reminders.length === 0) {
-      return res
-        .status(200)
-        .json(new ApiResponse(400, {}, "No reminders found"));
-    }
 
     return res
       .status(200)
       .json(new ApiResponse(200, reminders, "Fetched all reminders"));
   } catch (error) {
     console.log(error);
-    return res.status(500).json({
-      message: "Failed to fetch reminders",
-      error: error.message,
-    });
+    throw new ApiError(500, "Failed to get all reminders");
   }
 };
 
 const createReminder = async (req, res) => {
   try {
-    let {
-      userId = req.user.id,
-      subscriptionId,
-      type = "email",
-      payload,
-      timezone = "UTC",
-      scheduleType = "monthly",
-      sendAt = "",
-      cron_expr = "",
-      maxAttempts = 3,
-    } = req.body;
+    const subscriptionId = req.params.subscriptionId || req.body.subscriptionId;
+    let { type = "email", payload = {}, daysBefore = 1, sendAt } = req.body;
 
-    // const dt = new Date();
-    // dt.setMinutes(dt.getMinutes() + 1);
-    sendAt = calculateSendDate(scheduleType);
+    const subscription = await Subscription.findUnique({
+      where: { userId: req.user.id, id: subscriptionId },
+      select: { frequency: true, renewalDate: true },
+    });
+    if (!subscription) {
+      throw new ApiError(404, "No subscription found for this reminder");
+    }
+    if (!sendAt) {
+      const now = new Date();
+      let targetRenewalDate = new Date(subscription.renewalDate);
+
+      while (targetRenewalDate < now) {
+        targetRenewalDate = calculateNextCycleDate(
+          subscription.frequency,
+          targetRenewalDate,
+        );
+      }
+      sendAt = calculateNextReminderTime(targetRenewalDate, daysBefore);
+    }
 
     const reminder = await Reminder.create({
       data: {
-        userId: userId,
+        userId: req.user.id,
         subscriptionId: subscriptionId,
         type: type,
         payload: payload,
-        timezone: timezone,
-        scheduleType: scheduleType,
-        cronExpression: cron_expr || "",
         sendAt: sendAt,
-        maxAttempts: maxAttempts,
+        daysBefore: Number(daysBefore),
       },
     });
 
-    if (!reminder) {
-      return res.status(400).json({ error: "Failed to create reminder" });
-    }
-    // create an email reminder
-    try {
-      // schedule reminder logic
-      const emailReminder = await sendEmail(
-        "workspacebyamb@gmail.com",
-        sendAt.toISOString()
-      );
-      console.log(await emailReminder);
-      return res
-        .status(201)
-        .json(
-          new ApiResponse(
-            201,
-            { reminder, emailReminder },
-            "Reminder created successfully"
-          )
-        );
-    } catch (error) {
-      console.warn("Schedule Reminder Failed after Creation: ", error);
-      return res
-        .status(400)
-        .json(
-          new ApiResponse(
-            201,
-            { reminder },
-            "Reminder created (Email schedule failed)"
-          )
-        );
-    }
+    return res
+      .status(200)
+      .json(new ApiResponse(201, reminder, "Reminder created successfully"));
   } catch (error) {
     console.log("Failed to create Reminder", error);
-    return res.status(404).json({
-      message: "Failed to create reminder",
-      error: error.message,
-    });
+    throw new ApiError(404, "Failed to create Reminder");
   }
 };
 
 const getReminderById = async (req, res) => {
   try {
-    const Id = req.user.id;
     const { id: reminderId } = req.params;
     const reminder = await Reminder.findUnique({
-      where: { id: reminderId, userId: Id },
+      where: { id: reminderId, userId: req.user.id },
+      include: { subscription: true },
     });
 
-    if (!reminder) {
-      return res
-        .status(404)
-        .json(new ApiResponse(404, {}, "No reminder found"));
-    }
     return res
       .status(200)
       .json(new ApiResponse(200, reminder, "Fetched reminder"));
   } catch (error) {
     console.log("Failed to fetch reminder", error);
-    return res.status(404).json({
-      message: "Failed to fetch reminder",
-      error: error.message,
-    });
+    throw new ApiError(404, "Failed to fetch reminder");
   }
 };
 
 const updateReminder = async (req, res) => {
   try {
     let {
-      userId = req.user.id,
-      subscriptionId,
-      type = "email",
-      payload,
+      type,
+      payload = {},
+      enabled,
+      daysBefore = 1,
       timezone = "UTC",
-      scheduleType, // monthly, daily, weekly, yearly
-      sendAt = "",
-      cron_expr = "",
-      maxAttempts = 3,
+      sendAt,
     } = req.body;
-    const { id: reminderId } = req.params;
+    const { subscriptionId, id: reminderId } = req.params;
 
-    sendAt = calculateSendDate(scheduleType);
+    // sendAt = calculateNextCycleDate(scheduleType);
     const updatedReminder = await Reminder.update({
-      where: { id: reminderId, userId: userId },
+      where: {
+        id: reminderId,
+        subscriptionId: subscriptionId,
+        userId: req.user.id,
+      },
       data: {
         type: type,
         payload: payload,
+        daysBefore: daysBefore,
+        enabled: enabled,
         timezone: timezone,
-        scheduleType: scheduleType,
-        cronExpression: cron_expr,
         sendAt: sendAt,
-        maxAttempts: maxAttempts,
       },
     });
     return res
       .status(201)
       .json(
-        new ApiResponse(201, updatedReminder, "Reminder updated successfully")
+        new ApiResponse(201, updatedReminder, "Reminder updated successfully"),
       );
   } catch (error) {
     console.log("Failed to update Reminders", error);
-    return res.status(404).json({
-      message: "Failed to update reminders",
-      error: error.message,
-    });
+    throw new ApiError(404, "Failed to update Reminder");
   }
 };
 
@@ -175,15 +139,10 @@ const deleteReminder = async (req, res) => {
     await Reminder.delete({
       where: { id: reminderId, userId: Id },
     });
-    // write logic to get id of scheduled email & cancel it
-    // const res = cancelEmail()
-    return res.status(204).json(new ApiResponse(204, {}, "Reminder deleted"));
+    return res.status(204).json(new ApiResponse(200, {}, "Reminder deleted"));
   } catch (error) {
     console.log("Failed to delete Reminder", error);
-    return res.status(404).json({
-      message: "Failed to delete reminder",
-      error: error.message,
-    });
+    throw new ApiError(404, "Failed to delete Reminder");
   }
 };
 

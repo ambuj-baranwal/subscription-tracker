@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {verifyJWT} from "../middlewares/auth.middleware.js";
 import {validate} from "../middlewares/validate.middleware.js";
-import {createReminderSchema} from "../validations/reminder.validation.js";
+import {createReminderSchema, updateReminderSchema} from "../validations/reminder.validation.js";
 import {
     createReminder,
     deleteReminder,
@@ -11,7 +11,7 @@ import {
 } from "../controllers/reminder.controller.js";
 
 
-const router = new Router();
+const router = new Router({mergeParams: true});
 
 /*
 Expected body (example for daily):
@@ -34,10 +34,7 @@ router.route('/')
 
 router.route('/:id')
     .get(verifyJWT, getReminderById)
-    .put(verifyJWT, updateReminder)
+    .put(verifyJWT, validate(updateReminderSchema), updateReminder)
     .delete(verifyJWT, deleteReminder)
-
-router.route('/:id/cancel')
-    .put(verifyJWT, )
 
 export default router;

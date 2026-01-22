@@ -3,26 +3,28 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" 
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // url      = "file:./dev.db"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id            String         @id @default(uuid(4))
-  // clerkId       String         @unique
-  username      String         @unique
-  avatar        String?
-  email         String         @unique
-  password      String?
-  fullName      String
-  accessToken   String?
-  refreshToken  String?
-  lastLogin     DateTime?      @default(now())
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  subscriptions Subscription[]
-  conversations Conversation[]
-  Reminder      Reminder[]
+  id                  String                @id @default(uuid(4))
+  username            String                @unique
+  avatar              String?
+  email               String                @unique
+  password            String?
+  fullName            String
+  // accessToken         String?
+  refreshToken        String?
+  // lastLogin           DateTime?             @default(now())
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  subscriptions       Subscription[]
+  conversations       Conversation[]
+  Reminder            Reminder[]
+  WebPushSubscription WebPushSubscription[]
 }
 
 model Subscription {
@@ -32,7 +34,7 @@ model Subscription {
   name          String
   price         Int
   currency      currency   @default(INR)
-  frequency     frequency? @default(monthly)
+  frequency     frequency  @default(monthly)
   category      category
   paymentMethod String
   status        status     @default(active)
@@ -44,11 +46,41 @@ model Subscription {
   reminders     Reminder[]
 }
 
+model Reminder {
+  id             String       @id @default(uuid(4))
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  type           String       @default("email") // (e.g., '1_month_before', '10_days_before', '1_hour_before', 'renewal')
+  payload        Json // -- { to, subject, text, html, ... }
+  timezone       String       @default("UTC") // IANA tz (e.g. 'Asia/Kolkata')
+  sendAt         DateTime? //  next scheduled send (UTC)
+  enabled        Boolean      @default(true)
+  daysBefore     Int          @default(1)
+  attempts       Int          @default(0)
+  maxAttempts    Int          @default(3)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([sendAt], name: "idx_reminders_send_at")
+}
+
+model WebPushSubscription {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique // The browser's unique URL
+  p256dh    String // Encryption key
+  auth      String // Auth key
+  createdAt DateTime @default(now())
+}
+
 model Conversation {
   id        String    @id @default(cuid())
   title     String
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   messages  Message[]
 }
@@ -57,33 +89,12 @@ model Message {
   id             String       @id @default(cuid())
   role           role
   content        String
+  conversationId String
+  Conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-  conversationId String
-  Conversation   Conversation @relation(fields: [conversationId], references: [id])
 
   @@map("messages")
-}
-
-model Reminder {
-  id             String       @id @default(uuid(4))
-  userId         String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subscriptionId String
-  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  type           String // (e.g., '1_month_before', '10_days_before', '1_hour_before', 'renewal')
-  payload        Json // -- { to, subject, text, html, ... }
-  timezone       String       @default("UTC") // IANA tz (e.g. 'Asia/Kolkata')
-  scheduleType   String // 'one_time' | 'daily' | 'weekly' | 'monthly' | 'cron'
-  cronExpression String? //  optional: cron expression for 'cron'
-  sendAt         DateTime? //  next scheduled send (UTC)
-  enabled        Boolean      @default(true)
-  attempts       Int          @default(0)
-  maxAttempts    Int          @default(3)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-
-  @@index([sendAt], name: "idx_reminders_send_at")
 }
 
 enum status {
@@ -106,6 +117,7 @@ enum currency {
 }
 
 enum frequency {
+  once
   daily
   weekly
   monthly

@@ -1,36 +1,62 @@
-import {z} from "zod";
+import { z } from "zod";
 
-const validReminderDate = z
-    .iso.datetime("Invalid date format")
-    .superRefine((inputDate, ctx) => {
-        const date = new Date(inputDate);
-        const today = new Date();
+const reminderTypeEnum = ["email", "push"];
 
-        // Check 1: Ensure the date isn't in the past.
-        if (today > date) {
-            ctx.addIssue({
-                code: z.ZodError,
-                message: "Reminder Date can't be in the past"
-            })
-        }
+const timezoneEnum = [
+  "America/New_York",
+  "Asia/Kolkata",
+  "Asia/Singapore",
+  "Asia/Tokyo",
+  "Europe/Berlin",
+  "UTC",
+];
+
+const validReminderDate = z.iso
+  .datetime("Invalid sendAt date format")
+  .superRefine((inputDate, ctx) => {
+    const date = new Date(inputDate);
+    const today = new Date();
+    today.setMinutes(0, 0, 0);
+
+    // Check 1: Ensure the date isn't in the past.
+    if (date < today) {
+      ctx.addIssue({
+        code: z.ZodError,
+        message: "Reminder Date can't be in the past",
+      });
+    }
+  });
+
+const reminderBody = z.object({
+  subscriptionId: z.uuidv4({ error: "Invalid Subscription Id" }).optional(),
+  // type: z.string().optional().default('email'),
+  type: z.enum(reminderTypeEnum).default("email"),
+  payload: z.json("Invalid Payload json format").optional(),
+  timezone: z
+    .enum(timezoneEnum, {
+      error: `Invalid Timezone. Allowed Timezones are ${timezoneEnum.join(
+        ", "
+      )}`,
     })
+    .default("UTC"),
+  sendAt: validReminderDate,
+  // sendAt: validReminderDate.optional(),
+  // enabled: z.boolean().default(true) ,
+});
 
 const createReminderSchema = z.object({
-    body: z.object({
-        userId: z.uuid("Invalid User Id").optional(),
-        subscriptionId: z.uuid("Invalid Subscription Id"),
-        type: z.string().optional().default('email'),
-        payload: z.json("Invalid Payload json format") ,
-        timezone: z.enum(['India+05:30', "USA-05:00", "Japan+09:00", "Europe+01:00", "UTC"]).default("UTC"),
-        scheduleType: z.enum(['once', 'daily', 'weekly', 'monthly', 'quarterly', 'halfYearly', 'yearly'], 'Invalid Frequency').default('monthly'),
-        cronExpression: z.string().optional(),
-        sendAt: validReminderDate.optional(),
-        enabled: z.boolean().default(true) ,
-        attempts: z.int().optional().default(0),
-        maxAttempts: z.int().lt(4).optional() ,
-    })
-})
+  params: z.object({
+    subscriptionId: z.uuidv4({ error: "Invalid Subscription Id" }),
+  }),
+  body: reminderBody,
+});
 
-export {
-    createReminderSchema,
-}
+const updateReminderSchema = z.object({
+  params: z.object({
+    subscriptionId: z.uuidv4({ error: "Invalid Subscription Id" }),
+    id: z.uuidv4({ error: "Invalid Reminder Id" }),
+  }),
+  body: reminderBody.partial(),
+});
+
+export { createReminderSchema, updateReminderSchema };
