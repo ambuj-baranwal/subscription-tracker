@@ -7,7 +7,6 @@ import {
   refreshAccessToken,
   resetPassword,
   signUp,
-  updateAccountDetails,
   // updateUserAvatar
 } from "../controllers/auth.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";

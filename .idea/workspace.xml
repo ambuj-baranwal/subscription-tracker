@@ -6,20 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="a81205bb-1e52-493c-8a57-dae36343a9a1" name="Changes" comment=".">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prisma/dev.db" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/dev.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/auth.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/auth.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/dashboard.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/dashboard.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/reminder.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/reminder.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/subscription.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/subscription.controller.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/user.controller.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/user.controller.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.js.md" beforeDir="false" afterPath="$PROJECT_DIR$/server.js.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/routes/auth.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/auth.routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/dashboard.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/dashboard.routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/subscription.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/subscription.routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/user.routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/user.routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/scheduler.utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/scheduler.utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/sendEmail.utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/sendEmail.utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/validations/auth.validation.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/validations/auth.validation.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +54,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "prisma-update",
+    "git-widget-placeholder": "deploy1",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "C:/Users/ambuj/Project/refactor1/src/controllers",
@@ -80,6 +71,10 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\ambuj\Project\refactor1\src\controllers" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ambuj\Project\refactor1" />
+      <recent name="C:\Users\ambuj\Project\refactor1\src" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -126,7 +121,7 @@
       <updated>1768202175430</updated>
       <workItem from="1768202178866" duration="10335000" />
       <workItem from="1768268180438" duration="25621000" />
-      <workItem from="1768467061590" duration="73110000" />
+      <workItem from="1768467061590" duration="75224000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <option name="closed" value="true" />
