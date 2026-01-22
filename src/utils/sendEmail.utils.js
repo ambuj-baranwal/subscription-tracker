@@ -1,14 +1,14 @@
 import { Resend } from "resend";
-import {ApiError} from "./ApiError.js";
+import { ApiError } from "./ApiError.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const sendEmail = async (emailId, message = '', scheduleISODateTime = null) => {
+const sendEmail = async (emailId, message = "", scheduleISODateTime = null) => {
   try {
     const emailConfig = {
       from: "Subscription Tracker <onboarding@resend.dev>",
-      // to: emailId,
-      to: process.env.emailId,
+      to: emailId,
+      // to: process.env.emailId,
       subject: "Reminder from Subscription Tracker",
       html: `<h1>Your subscription is renewing soon!</h1>
                     <p>${message}</p>`,
@@ -18,13 +18,12 @@ const sendEmail = async (emailId, message = '', scheduleISODateTime = null) => {
       emailConfig.scheduledAt = scheduleISODateTime;
     }
 
-    // const response = await resend.emails.send(emailConfig);
-    const response = "await resend.emails.send(emailConfig);"
+    const response = await resend.emails.send(emailConfig);
 
     console.log("Email Sent Successfully", response);
     return response;
   } catch (error) {
-      throw new ApiError(500, 'Error sending email');
+    throw new ApiError(500, "Error sending email");
     // return console.error("Error sending Email", error);
   }
 };

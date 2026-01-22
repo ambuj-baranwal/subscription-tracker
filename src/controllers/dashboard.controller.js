@@ -1,6 +1,8 @@
 import { Subscription, Reminder } from "../config/prisma.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
+import {addDays} from "date-fns";
 
 const getDashboardStats = async (req, res) => {
     try {
@@ -139,8 +141,47 @@ const getUpcomingRenewals = async (req, res) => {
     }
 };
 
+const getUpcomingReminders = asyncHandler(async (req, res) => {
+    const { days = 7 } = req.query;
+     const today = new Date();
+    const futureDate = addDays(today, Number(7));
+
+    const upcomingReminders = await Reminder.findMany({
+        where: {
+            userId: req.user.id,
+            enabled: true,
+            sendAt: {
+                gte: today,
+                lte: futureDate,
+            },
+        },
+        orderBy: {
+            sendAt: "asc",
+        },
+    });
+
+    if (upcomingReminders.length < 0) {
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, [], "No upcoming renewals found for this period"),
+            );
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                upcomingReminders,
+                `Found ${upcomingReminders.length} upcoming renewals`,
+            ),
+        );
+});
+
 export {
     getDashboardStats,
     getSpendingAnalytics,
-    getUpcomingRenewals
+    getUpcomingRenewals,
+    getUpcomingReminders,
 };

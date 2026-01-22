@@ -15,25 +15,21 @@ import {
 } from "../validations/subscription.validation.js";
 
 const router = Router();
+router.use(verifyJWT);
 
-router
-  .route("/delete-all-subscriptions")
-  .put(verifyJWT, deleteAllSubscriptions);
+router.route("/delete-all-subscriptions").put(deleteAllSubscriptions);
 
 router
   .route("/")
-  .get(verifyJWT, getSubscriptions)
-  .post(verifyJWT, validate(createSubscriptionSchema), createSubscription);
+  .get(getSubscriptions)
+  .post(validate(createSubscriptionSchema), createSubscription);
 
 router
   .route("/:id")
-  .get(verifyJWT, getSubscriptionById)
-  .put(verifyJWT, validate(updateSubscriptionSchema), updateSubscription)
-  .delete(verifyJWT, deleteSubscription);
+  .get(getSubscriptionById)
+  .put(validate(updateSubscriptionSchema), updateSubscription)
+  .delete(deleteSubscription);
 
-router.route("/:id/cancel").put(verifyJWT);
-
-router.route("/upcoming-renewals").get(verifyJWT);
-
+// router.route("/:id/cancel").put(verifyJWT);
 
 export default router;

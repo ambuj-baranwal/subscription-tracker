@@ -1,6 +1,8 @@
 import { Subscription } from "../config/prisma.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { calculateNextCycleDate} from "../utils/dateHandler.utils.js";
+import { calculateNextCycleDate } from "../utils/dateHandler.utils.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { addDays } from "date-fns";
 
 const getSubscriptions = async (req, res) => {
   try {
@@ -39,13 +41,16 @@ const createSubscription = async (req, res) => {
       status,
       startDate,
       renewalDate,
+      daysBefore = 1,
     } = req.body;
     const userId = req.user.id;
     const start = new Date(startDate);
-    let renewal = renewalDate ? new Date(renewalDate) : calculateNextCycleDate(frequency, startDate);
+    let renewal = renewalDate
+      ? new Date(renewalDate)
+      : calculateNextCycleDate(frequency, startDate);
 
     const reminderDate = new Date(renewal);
-    reminderDate.setDate(reminderDate.getDate() - 1);
+    reminderDate.setDate(reminderDate.getDate() - Number(daysBefore));
     // console.log(`Current DateTime : ${dt.toLocaleString("en-IN")} `)
     // console.log(`Renewal Date : ${renewalDate.toLocaleString("en-IN")}`)
     const subscription = await Subscription.create({
@@ -61,14 +66,13 @@ const createSubscription = async (req, res) => {
         startDate: start,
         renewalDate: renewal,
         reminders: {
-            create: {
-                userId: userId,
-                type: 'email',
-                // scheduleType: frequency,
-                sendAt: reminderDate,
-                // status: 'pending',
-                payload: {}
-            }
+          create: {
+            userId: userId,
+            type: "email",
+            daysBefore: Number(daysBefore),
+            sendAt: reminderDate,
+            payload: {},
+          },
         },
       },
     });
@@ -76,7 +80,7 @@ const createSubscription = async (req, res) => {
     return res
       .status(201)
       .json(
-        new ApiResponse(201, subscription, "Subscription created successfully")
+        new ApiResponse(201, subscription, "Subscription created successfully"),
       );
   } catch (error) {
     console.log("Failed to create Subscription", error);
@@ -93,7 +97,7 @@ const getSubscriptionById = async (req, res) => {
     const { id: subscriptionId } = req.params;
     const subscription = await Subscription.findUnique({
       where: { id: subscriptionId, userId: Id },
-        include: {reminders: true}
+      include: { reminders: true },
     });
 
     if (!subscription) {
@@ -129,8 +133,8 @@ const updateSubscription = async (req, res) => {
         new ApiResponse(
           200,
           updatedSubscription,
-          "Subscription updated successfully"
-        )
+          "Subscription updated successfully",
+        ),
       );
   } catch (error) {
     console.log("Failed to update Subscriptions", error);

@@ -1,6 +1,7 @@
 import { Reminder, Subscription } from "../config/prisma.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import {
+  calculateNextCycleDate,
   calculateNextReminderTime,
 } from "../utils/dateHandler.utils.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -43,7 +44,16 @@ const createReminder = async (req, res) => {
       throw new ApiError(404, "No subscription found for this reminder");
     }
     if (!sendAt) {
-      sendAt = calculateNextReminderTime(subscription.renewalDate, daysBefore);
+      const now = new Date();
+      let targetRenewalDate = new Date(subscription.renewalDate);
+
+      while (targetRenewalDate < now) {
+        targetRenewalDate = calculateNextCycleDate(
+          subscription.frequency,
+          targetRenewalDate,
+        );
+      }
+      sendAt = calculateNextReminderTime(targetRenewalDate, daysBefore);
     }
 
     const reminder = await Reminder.create({
@@ -53,6 +63,7 @@ const createReminder = async (req, res) => {
         type: type,
         payload: payload,
         sendAt: sendAt,
+        daysBefore: Number(daysBefore),
       },
     });
 
@@ -113,7 +124,7 @@ const updateReminder = async (req, res) => {
     return res
       .status(201)
       .json(
-        new ApiResponse(201, updatedReminder, "Reminder updated successfully")
+        new ApiResponse(201, updatedReminder, "Reminder updated successfully"),
       );
   } catch (error) {
     console.log("Failed to update Reminders", error);

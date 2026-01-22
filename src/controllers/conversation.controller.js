@@ -21,7 +21,7 @@ const getConversations = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(
-      new ApiResponse(200, conversations, "Conversation fetched successfully")
+      new ApiResponse(200, conversations, "Conversation fetched successfully"),
     );
 });
 
@@ -41,7 +41,7 @@ const getConversation = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(
-      new ApiResponse(200, conversation, "Conversation fetched successfully")
+      new ApiResponse(200, conversation, "Conversation fetched successfully"),
     );
 });
 
@@ -240,7 +240,7 @@ const searchConversation = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, messages, "Search results fetched successfully")
+      new ApiResponse(200, messages, "Search results fetched successfully"),
     );
 });
 

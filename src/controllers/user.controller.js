@@ -57,4 +57,4 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.status(204).json(new ApiResponse(204, {}, "User Deleted Successfully"));
 });
 
-export { getUsers, getUser, createUser, deleteUser };
+export { getUsers, getUser, createUser, updateUser, deleteUser };
